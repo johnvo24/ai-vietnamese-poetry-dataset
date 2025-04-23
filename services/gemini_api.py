@@ -4,19 +4,19 @@ from google.genai import types
 class GeminiAI():
     def __init__(self, api_keys):
         self.api_keys = api_keys
-        self.current_key_index = 0
-        self._init_client()
+        self.current_key_index = -1
         
     def _init_client(self):
         api_key = self.api_keys[self.current_key_index]
         self.client = genai.Client(api_key=api_key)
-        print(f"API Key: {api_key}")
+        # print(f"API Key: {api_key}")
 
     def switch_to_next_key(self):
         self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
         self._init_client()
 
     def generate(self, prompt):
+        self.switch_to_next_key()
         try:
             response =  self.client.models.generate_content(
                 model='gemini-2.0-flash',
@@ -26,11 +26,12 @@ class GeminiAI():
                     max_output_tokens=1000
                 ),
             )
-            return response
+            return response.text
         except Exception as e:
+            self.switch_to_next_key()
+            print("Hello")
             raise Exception(f"❌ Lỗi API: {e}")
-    
-    
+            
 
 # for i in range(0, 1):
 #     print(generate(prompt="Viết bài thơ lục bát tặng mẹ ngày 8/3").text)
