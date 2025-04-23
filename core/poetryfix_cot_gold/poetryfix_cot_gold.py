@@ -75,13 +75,13 @@ def generate_reasoning_chain(original_poem, num_steps):
   while not final_step:
     final_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, is_last_step=True)
     helper.delay(0.5, 2.5)
-    reasoning_chain.append({
-      "original_poem": original_poem,
-      "step_index": num_steps-1,
-      "error_poem": final_step["poem"],
-      "step_content": final_step["step"],
-      "edited_poem": original_poem
-    })
+  reasoning_chain.append({
+    "original_poem": original_poem,
+    "step_index": num_steps-1,
+    "error_poem": final_step["poem"],
+    "step_content": final_step["step"],
+    "edited_poem": original_poem
+  })
   current_poem = final_step["poem"]
   print(f"Final[{error_type}]", end=' -> ')
 
@@ -138,7 +138,7 @@ def generate_dataset(poem_csv_filepath: str, poetryfix_cot_gold_csv_filepath: st
     weights = [25, 30, 30, 10, 4, 1] if line_count <= 2 else [15, 25, 25, 25, 8, 2] if line_count <= 4 else [10, 15, 20, 20, 20, 15]
     num_steps=random.choices([2, 3, 4, 5, 6, 7], weights=weights, k=1)[0]
     
-    print(f"Generate CoT:", end=' ')
+    print(f"Generate CoT:", end=f'[{line_count} LINES] >>> ')
     chain = generate_reasoning_chain(original_poem=poem, num_steps=num_steps)
     chain_df = pd.DataFrame(chain)
 
