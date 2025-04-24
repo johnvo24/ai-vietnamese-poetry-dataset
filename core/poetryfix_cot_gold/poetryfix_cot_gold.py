@@ -74,7 +74,7 @@ def generate_reasoning_chain(original_poem, num_steps):
   final_step = None
   while not final_step:
     final_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, is_last_step=True)
-    helper.delay(0.5, 2.5)
+    helper.delay(0.1, 0.5)
   reasoning_chain.append({
     "original_poem": original_poem,
     "step_index": num_steps-1,
