@@ -29,7 +29,6 @@ class GeminiAI():
             return response.text
         except Exception as e:
             self.switch_to_next_key()
-            print("Hello")
             raise Exception(f"❌ Lỗi API: {e}")
             
 

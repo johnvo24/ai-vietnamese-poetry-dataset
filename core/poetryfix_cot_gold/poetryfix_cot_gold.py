@@ -30,7 +30,7 @@ def generate_init_step(err_poem):
     else: return None
   
   except Exception as e:
-    print(f"API ERROR: {e}")
+    # print(f"API ERROR: {e}")
     return None
 
 def generate_prev_step(edited_poem, error_type, is_last_step):
@@ -46,7 +46,7 @@ def generate_prev_step(edited_poem, error_type, is_last_step):
     else: return None
   
   except Exception as e:
-    print(f"API ERROR: {e}")
+    # print(f"API ERROR: {e}")
     return None
   
 def get_error_type(current_step, num_steps, adaptiveRandoms):
