@@ -30,7 +30,6 @@ class GeminiAI():
         except Exception as e:
             self.switch_to_next_key()
             raise Exception(f"❌ Lỗi API: {e}")
-            
 
 # for i in range(0, 1):
 #     print(generate(prompt="Viết bài thơ lục bát tặng mẹ ngày 8/3").text)

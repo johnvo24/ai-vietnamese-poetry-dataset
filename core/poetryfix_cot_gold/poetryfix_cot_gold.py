@@ -67,7 +67,7 @@ def generate_reasoning_chain(original_poem, num_steps):
   current_poem = original_poem
 
   adaptiveRandom1 = AdaptiveRandom(values=["SE", "RE", "TE"])
-  adaptiveRandom2 = AdaptiveRandom(values=["ME", "IE", "FE"])
+  adaptiveRandom2 = AdaptiveRandom(values=["ME", "IE"])
 
   # Generate Final step -> Inter step -> Init step
   error_type = get_error_type(current_step=num_steps-1, num_steps=num_steps, adaptiveRandoms=(adaptiveRandom1, adaptiveRandom2))
@@ -89,7 +89,7 @@ def generate_reasoning_chain(original_poem, num_steps):
     error_type = get_error_type(current_step=i, num_steps=num_steps, adaptiveRandoms=(adaptiveRandom1, adaptiveRandom2))
     inter_step = None
     while not inter_step:
-      inter_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, is_last_step=True)
+      inter_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, is_last_step=False)
       helper.delay(0.1, 0.5)
     reasoning_chain.insert(0, {
       "original_poem": original_poem,

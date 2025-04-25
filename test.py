@@ -9,3 +9,8 @@ import random
 #   print(step)
 
 # generate_dataset(poem_csv_filepath="dataset/raw/poem_dataset.csv", poetryfix_cot_gold_csv_filepath="dataset/raw/poetryfix_cot_gold.csv")
+
+# helper.check_gemini_key(os.getenv("GEMINI_KEYS").split(','))
+
+df = pd.read_csv('dataset/raw/poem_dataset.csv')
+print(len(df))

@@ -15,14 +15,13 @@ Mô tả lỗi:
 {'- TE (Tone Error): Thanh trắc gồm các từ có dấu: sắc, hỏi, ngã, nặng. Thanh bằng gồm các từ có dấu huyền hoặc thanh ngang. Câu lục: Tiếng 2-4-6 theo thứ tự Bằng (B) - Trắc (T) - Bằng (B). Câu bát: Tiếng 2-4-6-8 theo B-T-B-B (hoặc biến thể: T-B-T-B).' if error_type == "TE" else ''}
 {'- ME (Meaning Error): Nội dung thơ không rõ ràng hoặc lệch chủ đề.' if error_type == "ME" else ''}
 {'- IE (Imagery Error): Hình ảnh thơ không rõ ràng, mơ hồ, khiên cưỡng, sáo rỗng, mâu thuẫn hoặc không gợi cảm xúc, khiến người đọc khó hình dung và cảm nhận được ý thơ.' if error_type == "IE" else ''}
-{'- FE (Figurative Error): Sử dụng sai biện pháp tu từ như (ẩn dụ, so sánh, nhân hóa...) một cách gượng ép, khó hiểu, mở hồ, không phù hợp.' if error_type == "FE" else ''}
 
 Step structure (Bước suy luận sửa lỗi phải đủ các token sau và không tự thêm token nào khác nữa):
 <error> {error_type}
 <desc> Mô tả lỗi và ảnh hưởng của nó. 
 <reason> Suy luận chi tiết ra hướng giải quyết. 
 <action> Từ, cụm từ, câu thay thế <replace> Từ, cụm từ, câu cũ <line> Dòng số mấy <index> Vị trí thứ mấy của dòng. 
-<effect> Hiệu quả sửa đổi và đánh giá chất lượng bài thơ sau bước sửa. (Nội dung này quan trọng để xác định sinh token kết thúc <eos> hay không)
+<effect> Hiệu quả sửa đổi và đánh giá chất lượng bài thơ sau bước sửa. {'(Nội dung này quan trọng để xác định rằng đã sửa xong bài thơ)' if is_last_step else ''}
 {'<eos>' if is_last_step else '<eois>'}
 
 Hãy đóng vai trò là một Data Engineer chuyên nghiệp. Hãy tạo một lỗi ngẫu nhiên bằng cách thay thế bất kỳ từ, cụm từ hoặc câu vào trong bài thơ đích, và sau đó sinh ra bước sửa thơ cho lỗi đó dựa trên cấu trúc trên.
