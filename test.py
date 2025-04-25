@@ -1,4 +1,4 @@
-from core.poetryfix_cot_gold.poetryfix_cot_gold import *
+from core.poetryfix_gold_data.poetryfix_gold_data import *
 from utils.adaptive_random import AdaptiveRandom
 import random
 
@@ -12,5 +12,5 @@ import random
 
 # helper.check_gemini_key(os.getenv("GEMINI_KEYS").split(','))
 
-df = pd.read_csv('dataset/raw/poem_dataset.csv')
-print(len(df))
+# df = pd.read_csv('dataset/raw/poem_dataset.csv')
+# print(len(df))
