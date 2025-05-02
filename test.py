@@ -12,5 +12,10 @@ import random
 
 # helper.check_gemini_key(os.getenv("GEMINI_KEYS").split(','))
 
-# df = pd.read_csv('dataset/raw/poem_dataset.csv')
+# df1 = pd.read_csv('dataset/raw/poetryfix_dataset_0.csv')
+# df2 = pd.read_csv('dataset/raw/poetryfix_dataset_1.csv')
+# print(len(df1))
+# print(len(df2))
+# df = pd.concat([df1, df2], ignore_index=True)
 # print(len(df))
+# df.to_csv('dataset/raw/poetryfix_dataset.csv', index=False, encoding='utf-8-sig')

@@ -34,8 +34,8 @@ def generate_init_step(err_poem):
     # print(f"API ERROR: {e}")
     return None
 
-def generate_prev_step(edited_poem, error_type, is_last_step):
-  prompt = get_prev_step_prompt(edited_poem=edited_poem, error_type=error_type, is_last_step=is_last_step)
+def generate_prev_step(edited_poem, error_type, error_line, is_last_step):
+  prompt = get_prev_step_prompt(edited_poem=edited_poem, error_type=error_type, error_line=error_line, is_last_step=is_last_step)
   try:
     response = gemini_ai.generate(prompt=prompt)
     poem_match = re.search(f"<poem>(.*?)</poem>", response, re.DOTALL)
@@ -72,9 +72,11 @@ def generate_reasoning_chain(original_poem, num_steps):
 
   # Generate Final step -> Inter step -> Init step
   error_type = get_error_type(current_step=num_steps-1, num_steps=num_steps, adaptiveRandoms=(adaptiveRandom1, adaptiveRandom2))
+  error_line = (num_steps-1 + random.randint(-1, 2)) % (str(current_poem).count('\n')+1)
+  error_line = (str(current_poem).count('\n')+1) if error_line == 0 else error_line
   final_step = None
   while not final_step:
-    final_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, is_last_step=True)
+    final_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, error_line=error_line, is_last_step=True)
     helper.delay(0.1, 0.5)
   reasoning_chain.append({
     "original_poem": original_poem,
@@ -84,13 +86,15 @@ def generate_reasoning_chain(original_poem, num_steps):
     "edited_poem": original_poem
   })
   current_poem = final_step["poem"]
-  print(f"Final[{error_type}]", end=' -> ')
+  print(f"Final[{error_type},l{error_line}]", end=' -> ')
 
   for i in range(num_steps-2, 0, -1):
     error_type = get_error_type(current_step=i, num_steps=num_steps, adaptiveRandoms=(adaptiveRandom1, adaptiveRandom2))
+    error_line = (i + random.randint(-1, 2)) % (str(current_poem).count('\n')+1)
+    error_line = (str(current_poem).count('\n')+1) if error_line == 0 else error_line
     inter_step = None
     while not inter_step:
-      inter_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, is_last_step=False)
+      inter_step = generate_prev_step(edited_poem=current_poem, error_type=error_type, error_line=error_line, is_last_step=False)
       helper.delay(0.1, 0.5)
     reasoning_chain.insert(0, {
       "original_poem": original_poem,
@@ -100,7 +104,7 @@ def generate_reasoning_chain(original_poem, num_steps):
       "edited_poem": current_poem
     })
     current_poem = inter_step["poem"]
-    print(f"Inter[{error_type}]", end=' -> ')
+    print(f"Inter[{error_type},l{error_line}]", end=' -> ')
 
   
   init_step = None
@@ -122,7 +126,7 @@ def generate_reasoning_chain(original_poem, num_steps):
 def generate_dataset(poem_csv_filepath: str, poetryfix_dataset_csv_filepath: str, save_step=25):
   # Read lucbat dataset
   df = pd.read_csv(poem_csv_filepath).dropna(subset=["content"]).drop_duplicates(subset="content")
-  poems = df["content"].to_list()[0: 4000]
+  poems = df["content"].to_list()[100: 6000]
 
   # Read poetryfix_dataset.csv file
   if os.path.exists(poetryfix_dataset_csv_filepath):
@@ -168,11 +172,13 @@ def convert_poetryfix_dataset_to_gold_data(poetryfix_dataset_csv_filepath):
         pased_step = helper.parse_step(step_str=_reasonings_dict[key][idx]['step_content'], is_last_step=True) if idx == (len(steps)-1) else helper.parse_step(step_str=_reasonings_dict[key][idx]['step_content'], is_last_step=False)
         if idx == 0: 
           reasoning_memory = f"<reasoning_memory> Tóm tắt ngữ cảnh: {pased_step['desc']} <eois>"
+          _reasonings_dict[key][idx]['error_poem'] = f"<sop> {_reasonings_dict[key][idx+1]['error_poem']} <eop>"
           _reasonings_dict[key][idx+1]['error_poem'] = f"<sop> {_reasonings_dict[key][idx+1]['error_poem']} <eop> {reasoning_memory}"
         elif idx != (len(steps)-1): 
           reasoning_memory = f"{reasoning_memory} Sửa lỗi {pased_step['error']}: Thay \"{pased_step['replace']}\" bằng \"{pased_step['action']}\" ở dòng {pased_step['line']} tại từ thứ {pased_step['index']} <eois>"
           _reasonings_dict[key][idx+1]['error_poem'] = f"<sop>{_reasonings_dict[key][idx+1]['error_poem']} <eop> {reasoning_memory}"
       except Exception as e:
+        # Thieu key thi loai bo
         del _reasonings_dict[key]
         break
 
@@ -185,4 +191,4 @@ def convert_poetryfix_dataset_to_gold_data(poetryfix_dataset_csv_filepath):
   
   df_result = pd.DataFrame(rows)
   df_result.to_csv("dataset/processed/poetryfix_gold_data.csv", index=False)
-  print(f"Dataset: {len(reasonings_dict.items())} => {len(_reasonings_dict.items())}")
+  print(f"Dataset: {len(reasonings_dict.items())} => {len(_reasonings_dict.items())} poems ~ {len(df_result)} samples")

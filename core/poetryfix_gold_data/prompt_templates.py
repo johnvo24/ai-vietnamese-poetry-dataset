@@ -7,7 +7,7 @@ Bài thơ sau có thể đang chứa lỗi. Hãy cố gắng phân tích và tr�
 Chỉ trả về dưới dạng sau: <desc> "Mô tả ngắn gọn về chủ đề bài thơ" </desc>
 """
 
-def get_prev_step_prompt(edited_poem, error_type, is_last_step):
+def get_prev_step_prompt(edited_poem, error_type, error_line, is_last_step):
   return f"""
 Mô tả lỗi:
 {'- SE (Structural Error): Thơ lục bát gồm các cặp câu 6-8 chữ. Câu 1 có 6 chữ, câu 2 có 8 chữ. Sai quy tắc này chính là lỗi cấu trúc.' if error_type == "SE" else ''}
@@ -25,7 +25,7 @@ Step structure (Bước suy luận sửa lỗi phải đủ các token sau và k
 {'<eos>' if is_last_step else '<eois>'}
 
 Hãy đóng vai trò là một Data Engineer chuyên nghiệp. Hãy tạo một lỗi ngẫu nhiên bằng cách thay thế bất kỳ từ, cụm từ hoặc câu vào trong bài thơ đích, và sau đó sinh ra bước sửa thơ cho lỗi đó dựa trên cấu trúc trên.
-Lưu ý: Không thay đổi số dòng của bài thơ.
+Lưu ý: Tạo lỗi ở dòng {error_line} của bài thơ. Chú ý không làm thay đổi số dòng của bài thơ.
 Sau đây là bài thơ đích:
 
 {edited_poem}
